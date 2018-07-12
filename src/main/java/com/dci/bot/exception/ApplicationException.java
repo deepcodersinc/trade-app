@@ -20,7 +20,7 @@ public class ApplicationException extends Exception {
 		super(message);
 		this.errorCode = errorCode;
 		this.developerMessage = developerMessage;
-	}
+	}	
 
 	public String getErrorCode() {
 		return this.errorCode;
@@ -29,4 +29,6 @@ public class ApplicationException extends Exception {
 	public String getDeveloperMessage() {
 		return developerMessage;
 	}
+
+	
 }
