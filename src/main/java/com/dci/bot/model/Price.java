@@ -1,13 +1,16 @@
 package com.dci.bot.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Price {
+	@SerializedName("currency")
     private String currency;
+	
+	@SerializedName("decimals")
     private int decimals;
+	
+	@SerializedName("amount")
     private String amount;
-    
-    public Price() {
-    	
-    }
     
     public Price(String currency, int decimals, String amount) {
 		super();

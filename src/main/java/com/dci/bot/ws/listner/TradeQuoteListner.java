@@ -1,10 +1,10 @@
-package com.dci.bot.ws;
+package com.dci.bot.ws.listner;
 
 import com.dci.bot.exception.ApplicationException;
 import com.dci.bot.exception.OrderException;
-import com.dci.bot.http.RestTradeOrderManager;
-import com.dci.bot.http.TradeOrderManager;
+import com.dci.bot.http.TradeOrderClient;
 import com.dci.bot.model.Position;
+import com.dci.bot.ws.SubscriptionMap;
 import com.dci.util.JsonUtil;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -12,13 +12,13 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 public class TradeQuoteListner extends WebSocketAdapter {	
 	
 	SubscriptionMap<String, Position> subscriptions = SubscriptionMap.getInstance();
-	TradeOrderManager tradeOrder;
+	TradeOrderClient tradeOrder;
 	
 	public TradeQuoteListner() {
 		
 	}
 	
-	public TradeQuoteListner(TradeOrderManager tradeOrder) {
+	public TradeQuoteListner(TradeOrderClient tradeOrder) {
 		this.tradeOrder = tradeOrder;
 	}
 
@@ -74,5 +74,7 @@ public class TradeQuoteListner extends WebSocketAdapter {
 		String request = "{\n" + "\"unsubscribeFrom\": [\n" + "\"trading.product." + productId + "\"\n" + "]}";
 		websocket.sendText(request);
 		subscriptions.remove(productId);
+		
+		if(subscriptions.size() == 0) websocket.disconnect();
 	}
 }

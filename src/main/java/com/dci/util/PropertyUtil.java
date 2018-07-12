@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.dci.bot.exception.ApplicationException;
-
 public enum PropertyUtil {
 	
 	INSTANCE;
@@ -15,7 +13,7 @@ public enum PropertyUtil {
 	Properties props;
 	String propertyFile;
 		
-	public String getValue(String key) throws ApplicationException {
+	public String getValue(String key) {
 		if(props == null) {
 			try {
 				String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
@@ -25,9 +23,9 @@ public enum PropertyUtil {
 				props.load(stream);
 				
 			} catch(FileNotFoundException fnfe)	 {
-				throw new ApplicationException(fnfe.getMessage());
+				System.out.println(fnfe.getMessage());
 			} catch(IOException ioe) {
-				throw new ApplicationException(ioe.getMessage());
+				System.out.println(ioe.getMessage());
 			}
 		}
 		 

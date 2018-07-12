@@ -1,17 +1,14 @@
 package com.dci.bot.ws;
 
 import java.io.IOException;
-import java.util.Optional;
-
-import org.apache.commons.cli.Options;
 
 import com.dci.bot.exception.ApplicationException;
-import com.dci.bot.http.RestTradeOrderManager;
 import com.dci.bot.model.Position;
-import com.dci.util.JsonUtil;
+import com.dci.bot.ws.listner.ConnectionStatusListner;
+import com.dci.bot.ws.listner.RegisterSubscriptionListner;
+import com.dci.bot.ws.listner.TradeQuoteListner;
 import com.dci.util.PropertyUtil;
 import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
@@ -23,7 +20,7 @@ public class WSTradeFeedManager {
 		
 	}
 	
-	public static void getWSConnection(ConnectionStatusListner listner) throws ApplicationException {		
+	public static void getWSConnection(ConnectionStatusListner connectListner, TradeQuoteListner tradeQuoteListner) throws ApplicationException {		
 				
 		if (ws!=null) return;
 		
@@ -32,16 +29,16 @@ public class WSTradeFeedManager {
 						.createSocket(PropertyUtil.INSTANCE.getValue("trade.feed.url"))						
 						.addHeader("Accept-Language", "nl-NL,en;q=0.8")
 						.addHeader("Authorization", PropertyUtil.INSTANCE.getValue("auth.token"))
-						.addListener(listner)
+						.addListener(connectListner)
 						.connect();
 				
 				System.out.print("Connecting");
 				
-				while(!listner.isConnected()) {
+				while(!connectListner.isConnected()) {
 					System.out.print("...");
 				}
-				ws.removeListener(listner);
-				ws.addListener(new TradeQuoteListner(new RestTradeOrderManager()));
+				ws.removeListener(connectListner);
+				ws.addListener(tradeQuoteListner);
 				
 			} catch (WebSocketException e) {
 				throw new ApplicationException(e.getMessage());
@@ -52,19 +49,7 @@ public class WSTradeFeedManager {
 	
 	public static void subscribe(Position position) throws Exception {
 		String request = "{\n" + "\"subscribeTo\": [\n" + "\"trading.product." + position.getProductId() + "\"\n" + "]}";
-		ws.addListener(new WebSocketAdapter() {
-			
-			@Override
-			public void onTextMessage(WebSocket websocket, String message) throws ApplicationException {				
-				SubscriptionMap<String, Position> subscriptions = SubscriptionMap.getInstance();				
-				boolean isTradeQuote = JsonUtil.INSTANCE.getJsonValue(message, "t").equals("trading.quote");
-				
-				if(isTradeQuote) {									
-					subscriptions.put(position.getProductId(), position);
-				}
-				websocket.removeListener(this);
-			}
-		});
+		ws.addListener(new RegisterSubscriptionListner(position));
 		ws.sendText(request);		
 	}	
 	

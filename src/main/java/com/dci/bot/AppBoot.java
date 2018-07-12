@@ -6,9 +6,12 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
+import com.dci.bot.http.RestTradeOrderClient;
+import com.dci.bot.http.TradeOrderClient;
 import com.dci.bot.model.Position;
-import com.dci.bot.ws.ConnectionStatusListner;
 import com.dci.bot.ws.WSTradeFeedManager;
+import com.dci.bot.ws.listner.ConnectionStatusListner;
+import com.dci.bot.ws.listner.TradeQuoteListner;
 import com.dci.util.PropertyUtil;
 
 public class AppBoot {
@@ -39,7 +42,10 @@ public class AppBoot {
 									Float.parseFloat(cmd.getOptionValue("uSellPrice")),
 									Float.parseFloat(cmd.getOptionValue("lSellPrice")));
 			
-			WSTradeFeedManager.getWSConnection(new ConnectionStatusListner());
+			TradeOrderClient orderManager = new RestTradeOrderClient();
+			
+			//Inject dependencies and create WebSocket connection
+			WSTradeFeedManager.getWSConnection(new ConnectionStatusListner(), new TradeQuoteListner(orderManager));
 			WSTradeFeedManager.subscribe(position);
 
 		} catch (Exception e) {

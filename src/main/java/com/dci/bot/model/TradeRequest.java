@@ -1,25 +1,29 @@
 package com.dci.bot.model;
 
-public class TradeRequest {
-    private String productId;
-    private Price investingAmount;
-    private int leverage;
+import java.io.Serializable;
+
+public class TradeRequest implements Serializable {
+	
+	private static final long serialVersionUID = 5016944900935702603L;
+	
+	private String productId;	
+	private Price investingAmount;
+	private int leverage;	
     private String direction;
-    private Source source;
+   
     
-    public TradeRequest(String productId, Price investingAmount, int leverage, String direction, Source source) {
+   public TradeRequest(String productId, Price investingAmount, int leverage) {
 		super();
 		this.productId = productId;
 		this.investingAmount = investingAmount;
 		this.leverage = leverage;
-		this.direction = direction;
-		this.source = source;
+		this.direction = "BUY";		
 	}
     
     @Override
 	public String toString() {
 		return "TradeRequest [productId=" + productId + ", investingAmount=" + investingAmount.toString() + ", leverage="
-				+ leverage + ", direction=" + direction + ", source=" + source.toString() +"]";
+				+ leverage + ", direction=" + direction +"]";
 	}
 
     public String getProductId() {
@@ -46,11 +50,4 @@ public class TradeRequest {
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
-	public Source getSource() {
-		return source;
-	}
-	public void setSource(Source source) {
-		this.source = source;
-	}
-    
 }
