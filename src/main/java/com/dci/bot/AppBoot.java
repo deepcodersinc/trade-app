@@ -43,10 +43,11 @@ public class AppBoot {
 									Float.parseFloat(cmd.getOptionValue("lSellPrice")));
 			
 			TradeOrderClient orderManager = new RestTradeOrderClient();
+			WSTradeFeedManager wsManager = new WSTradeFeedManager();
 			
 			//Inject dependencies and create WebSocket connection
-			WSTradeFeedManager.getWSConnection(new ConnectionStatusListner(), new TradeQuoteListner(orderManager));
-			WSTradeFeedManager.subscribe(position);
+			wsManager.createWSConnection(new ConnectionStatusListner());
+			wsManager.subscribe(position);
 
 		} catch (Exception e) {
 			e.printStackTrace();

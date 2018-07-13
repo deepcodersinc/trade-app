@@ -2,7 +2,7 @@ package com.dci.bot.ws;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SubscriptionMap<K, V> extends ConcurrentHashMap<K, V> {
+public class SubscriptionMap<String, Position> extends ConcurrentHashMap<String, Position> {
 	
 	private static SubscriptionMap instance;
 	

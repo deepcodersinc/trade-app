@@ -23,10 +23,9 @@ public enum PropertyUtil {
 				props.load(stream);
 				
 			} catch(FileNotFoundException fnfe)	 {
-				System.out.println(fnfe.getMessage());
+				fnfe.printStackTrace();
 			} catch(IOException ioe) {
-				System.out.println(ioe.getMessage());
-			}
+				ioe.printStackTrace();			}
 		}
 		 
 		return props.getProperty(key);

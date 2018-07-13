@@ -20,7 +20,7 @@ public class RestTradeOrderClient implements TradeOrderClient {
 		TradeRequest request = new TradeRequest(productId, new Price(PropertyUtil.INSTANCE.getValue("trade.currency"), 2, Float.toString(price)), 2);
 		
 		try {
-			TradeService service = TradeService.retrofit.create(TradeService.class);
+			TradeService service = TradeService.CONNECTION.create(TradeService.class);
 			Response<TradeResponse> httpResponse = service.buy(request).execute();
 			
 			if (httpResponse.isSuccessful()) {
@@ -37,7 +37,7 @@ public class RestTradeOrderClient implements TradeOrderClient {
 	public synchronized String closePosition(String positionId) throws OrderException, ApplicationException {
 		
 		try {
-			TradeService service = TradeService.retrofit.create(TradeService.class);		
+			TradeService service = TradeService.CONNECTION.create(TradeService.class);		
 			Response<TradeResponse> httpResponse = service.sell(positionId).execute();			
 	
 			if (httpResponse.isSuccessful()) {
