@@ -1,11 +1,53 @@
 package com.dci.bot.http;
 
+import java.io.IOException;
+
 import com.dci.bot.exception.ApplicationException;
 import com.dci.bot.exception.OrderException;
+import com.dci.bot.model.ErrorResponse;
+import com.dci.bot.model.Price;
+import com.dci.bot.model.TradeRequest;
+import com.dci.bot.model.TradeResponse;
+import com.dci.util.PropertyUtil;
+import com.google.gson.Gson;
 
-public interface TradeOrderClient {
+import retrofit2.Response;
+
+public class TradeOrderClient {
+
+	public synchronized String openPosition(String productId, float price) throws OrderException, ApplicationException {		
 	
-	public String openPosition(String productId, float price) throws OrderException, ApplicationException;
+		TradeRequest request = new TradeRequest(productId, new Price(PropertyUtil.INSTANCE.getValue("trade.currency"), 2, Float.toString(price)), 2);
+		
+		try {
+			TradeService service = TradeService.CONNECTION.create(TradeService.class);
+			Response<TradeResponse> httpResponse = service.buy(request).execute();
+			
+			if (httpResponse.isSuccessful()) {
+				return httpResponse.body().getPositionId();
+			} else {	
+				ErrorResponse error = new Gson().fromJson(httpResponse.errorBody().string(), ErrorResponse.class);
+				throw new OrderException(error.getMessage(), error.getDeveloperMessage(), error.getErrorCode(), httpResponse.code());
+			}		
+		} catch (IOException ioe) {
+			throw new ApplicationException(ioe.getMessage());
+		}		
+	}
+
+	public synchronized String closePosition(String positionId) throws OrderException, ApplicationException {
+		
+		try {
+			TradeService service = TradeService.CONNECTION.create(TradeService.class);		
+			Response<TradeResponse> httpResponse = service.sell(positionId).execute();			
 	
-	public String closePosition(String positionId) throws OrderException, ApplicationException;
+			if (httpResponse.isSuccessful()) {
+				return httpResponse.body().getProfitAndLoss().getAmount();
+			} else {				
+				ErrorResponse error = new Gson().fromJson(httpResponse.errorBody().string(), ErrorResponse.class);
+				throw new OrderException(error.getMessage(), error.getDeveloperMessage(), error.getErrorCode(), httpResponse.code());
+			}						
+		} catch (IOException ioe) {
+			throw new ApplicationException(ioe.getMessage());
+		}		
+	}
 }

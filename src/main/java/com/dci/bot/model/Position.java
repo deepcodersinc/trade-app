@@ -9,7 +9,9 @@ public class Position {
 	private String positionId;
 	private boolean bought;
 	
-	
+	public Position() {
+		this.bought = false;
+	}
 
 	public Position(String productId, float buyPrice, float sellPriceUpperLimit, float sellPriceLowerLimit) {
 		super();
@@ -67,7 +69,11 @@ public class Position {
 	public void setPositionId(String positionId) {
 		this.positionId = positionId;
 	}
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "Position [productId=" + productId + ", buyPrice=" + buyPrice + ", sellPriceUpperLimit="
+				+ sellPriceUpperLimit + ", sellPriceLowerLimit=" + sellPriceLowerLimit + ", positionId=" + positionId
+				+ ", bought=" + bought + "]";
+	}
 }

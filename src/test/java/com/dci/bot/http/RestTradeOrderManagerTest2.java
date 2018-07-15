@@ -45,7 +45,7 @@ public class RestTradeOrderManagerTest2 {
 	public void testBuyTrade() {
 		String responseJson = "{\\r\\n\\\"id\\\": \\\"9bc887eb-23d2-4293-a139-1da9c4eb5f1c\\\",\\r\\n\\\"positionId\\\": \\\"655ddda5-fd6d-48a9-800d-b7b93eb041af\\\",\\r\\n\\\"product\\\": {\\r\\n\\\"securityId\\\": \\\"26618\\\",\\r\\n\\\"symbol\\\": \\\"EUR/USD\\\",\\r\\n\\\"displayName\\\": \\\"EUR/USD\\\"\\r\\n},\\r\\n\\\"investingAmount\\\": {\\r\\n\\\"currency\\\": \\\"BUX\\\",\\r\\n\\\"decimals\\\": 2,\\r\\n\\\"amount\\\": \\\"10.00\\\"\\r\\n},\\r\\n\\\"price\\\": {\\r\\n\\\"currency\\\": \\\"USD\\\",\\r\\n\\\"decimals\\\": 5,\\r\\n\\\"amount\\\": \\\"1.07250\\\"\\r\\n},\\r\\n\\\"leverage\\\": 2,\\r\\n\\\"direction\\\": \\\"BUY\\\",\\r\\n\\\"type\\\": \\\"OPEN\\\",\\r\\n\\\"dateCreated\\\": 1492601296549\\r\\n}";
 		
-		RestTradeOrderClient orderClient = new RestTradeOrderClient();
+		TradeOrderClient orderClient = new TradeOrderClient();
 		//Response response = Response.error(404, ResponseBody.create(MediaType.parse("application/json") ,responseJson));
 		
 		server.enqueue(new MockResponse()

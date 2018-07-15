@@ -33,7 +33,7 @@ public class RestTradeOrderManagerTest {
 	private Response response;
 
 	@InjectMocks 
-	private RestTradeOrderClient orderManager;
+	private TradeOrderClient orderClient;
 
 	@Before public void setup() {
 		PropertyUtil.INSTANCE.setPropertyFile("environment-test.properties");
@@ -52,7 +52,7 @@ public class RestTradeOrderManagerTest {
 			when(response.body().toString()).thenReturn(responseJson);
 			when(client.newCall(any(Request.class)).execute()).thenReturn(response);
 			
-			assertThat(orderManager.openPosition("ss", 10.0F), is("655ddda5-fd6d-48a9-800d-b7b93eb041af"));
+			assertThat(orderClient.openPosition("ss", 10.0F), is("655ddda5-fd6d-48a9-800d-b7b93eb041af"));
 						
 		} catch (Exception e) {
 			fail();

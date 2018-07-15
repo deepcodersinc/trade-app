@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.dci.bot.ws.listner.ConnectionStatusListner;
 import com.dci.util.PropertyUtil;
 import com.neovisionaries.ws.client.WebSocket;
 

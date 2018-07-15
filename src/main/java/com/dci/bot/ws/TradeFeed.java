@@ -1,23 +1,25 @@
 package com.dci.bot.ws;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dci.bot.exception.ApplicationException;
 import com.dci.bot.model.Position;
-import com.dci.bot.ws.listner.ConnectionStatusListner;
-import com.dci.bot.ws.listner.TradeQuoteListner;
 import com.dci.util.PropertyUtil;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
-public class WSTradeFeedManager {
+public enum TradeFeed {
+	INSTANCE;
 	
+	private final Logger logger = LoggerFactory.getLogger(TradeFeed.class);
+
 	private static WebSocket ws;
-	private static Logger logger = LoggerFactory.getLogger(WSTradeFeedManager.class);
+	private static ConcurrentHashMap<String, Position> subscriptions = new ConcurrentHashMap<String, Position>();
 	
 	public void createWSConnection(ConnectionStatusListner listner) throws ApplicationException {		
 				
@@ -36,8 +38,8 @@ public class WSTradeFeedManager {
 				while(!listner.isConnected()) {
 					
 				}
-				logger.info("Connected");
-								
+				logger.info("Connected");				
+											
 			} catch (WebSocketException e) {
 				throw new ApplicationException(e.getMessage());
 			} catch (IOException e) {
@@ -48,10 +50,14 @@ public class WSTradeFeedManager {
 	public void subscribe(Position position) throws Exception {
 		String request = "{\n" + "\"subscribeTo\": [\n" + "\"trading.product." + position.getProductId() + "\"\n" + "]}";
 		
-		if(SubscriptionMap.getInstance().isEmpty()) {
+		if(subscriptions.isEmpty()) {
 			ws.addListener(new TradeQuoteListner());
 		}
-		SubscriptionMap.getInstance().put(position.getProductId(), position);
+		subscriptions.put(position.getProductId(), position);
 		ws.sendText(request);		
+	}
+	
+	public ConcurrentHashMap<String, Position> getSubscriptions() {
+		return subscriptions;
 	}
 }
