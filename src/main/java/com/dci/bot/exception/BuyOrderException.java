@@ -1,6 +1,6 @@
 package com.dci.bot.exception;
 
-public class OrderException extends Exception {
+public class BuyOrderException extends Exception {
 
 	private static final long serialVersionUID = 7764614194599848470L;
 		
@@ -8,11 +8,11 @@ public class OrderException extends Exception {
 	private String errorCode;
 	private int httpErrorCode;
 	
-	public OrderException(String message) {
+	public BuyOrderException(String message) {
 		super(message);
 	}
 
-	public OrderException(String message, String developerMessage, String errorCode, int httpErrorCode) {
+	public BuyOrderException(String message, String developerMessage, String errorCode, int httpErrorCode) {
 		super(message);
 		this.errorCode = errorCode;
 		this.developerMessage = developerMessage;
@@ -28,7 +28,4 @@ public class OrderException extends Exception {
 	public int getHttpErrorCode() {
 		return httpErrorCode;
 	}
-	
-		
-	
 }

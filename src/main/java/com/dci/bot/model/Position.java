@@ -7,10 +7,10 @@ public class Position {
 	private float sellPriceLowerLimit;
 	
 	private String positionId;
-	private boolean bought;
+	private OrderStatus orderStatus;
 	
 	public Position() {
-		this.bought = false;
+		this.orderStatus = OrderStatus.OPEN;
 	}
 
 	public Position(String productId, float buyPrice, float sellPriceUpperLimit, float sellPriceLowerLimit) {
@@ -19,7 +19,7 @@ public class Position {
 		this.buyPrice = buyPrice;
 		this.sellPriceUpperLimit = sellPriceUpperLimit;
 		this.sellPriceLowerLimit = sellPriceLowerLimit;
-		this.bought = false;
+		orderStatus = OrderStatus.OPEN;
 	}
 
 	public String getProductId() {
@@ -54,26 +54,58 @@ public class Position {
 		this.sellPriceLowerLimit = sellPriceLowerLimit;
 	}
 
-	public boolean isBought() {
-		return bought;
-	}
-
-	public void setBought(boolean bought) {
-		this.bought = bought;
-	}
-
 	public String getPositionId() {
 		return positionId;
 	}
 
 	public void setPositionId(String positionId) {
 		this.positionId = positionId;
+	}	
+	
+	public OrderStatus getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(OrderStatus orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+
+
+
+	public enum OrderStatus {
+		OPEN,
+		BOUGHT,
+		SOLD,
+		ERROR;
+		
+		public boolean isOpen() {
+			return this.ordinal() == 0;
+		}
+		public boolean isBought() {
+			return this.ordinal() == 1;
+		}
+		public boolean isSold() {
+			return this.ordinal() == 2;
+		}
+		public boolean isError() {
+			return this.ordinal() == 3;
+		}
+	}
+
+	public String getSubscriptionMessage() {
+		return "{\n" + "\"subscribeTo\": [\n" + "\"trading.product." + this.productId + "\"\n" + "]}";
+	}
+	
+	public String getUnsubscriptionMessage() {
+		return "{\n" + "\"unsubscribeFrom\": [\n" + "\"trading.product." + this.productId + "\"\n" + "]}";
 	}
 
 	@Override
 	public String toString() {
 		return "Position [productId=" + productId + ", buyPrice=" + buyPrice + ", sellPriceUpperLimit="
 				+ sellPriceUpperLimit + ", sellPriceLowerLimit=" + sellPriceLowerLimit + ", positionId=" + positionId
-				+ ", bought=" + bought + "]";
+				+ ", orderStatus=" + orderStatus + "]";
 	}
+	
+	
 }

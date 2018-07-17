@@ -2,49 +2,53 @@ package com.dci.bot.http;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dci.bot.exception.ApplicationException;
-import com.dci.bot.exception.OrderException;
-import com.dci.bot.model.ErrorResponse;
+import com.dci.bot.exception.BuyOrderException;
 import com.dci.bot.model.Price;
 import com.dci.bot.model.TradeRequest;
 import com.dci.bot.model.TradeResponse;
-import com.dci.util.PropertyUtil;
-import com.google.gson.Gson;
 
 import retrofit2.Response;
 
 public class TradeOrderClient {
-
-	public synchronized String openPosition(String productId, float price) throws OrderException, ApplicationException {		
 	
-		TradeRequest request = new TradeRequest(productId, new Price(PropertyUtil.INSTANCE.getValue("trade.currency"), 2, Float.toString(price)), 2);
+	private final Logger logger = LoggerFactory.getLogger(TradeOrderClient.class);
+	
+	public synchronized String openPosition(String productId, float price) throws BuyOrderException, ApplicationException {		
+	
+		TradeRequest request = new TradeRequest(productId, new Price("BUX", 2, Float.toString(price)), 2);
 		
 		try {
 			TradeService service = TradeService.CONNECTION.create(TradeService.class);
 			Response<TradeResponse> httpResponse = service.buy(request).execute();
 			
 			if (httpResponse.isSuccessful()) {
+				logger.info("---- Bought " + productId + " at " + httpResponse.body().getPrice().getAmount() + " ----");
 				return httpResponse.body().getPositionId();
-			} else {	
-				ErrorResponse error = new Gson().fromJson(httpResponse.errorBody().string(), ErrorResponse.class);
-				throw new OrderException(error.getMessage(), error.getDeveloperMessage(), error.getErrorCode(), httpResponse.code());
+			} else {
+				logger.error(httpResponse.errorBody().string());
+				throw new BuyOrderException(httpResponse.errorBody().string());
 			}		
 		} catch (IOException ioe) {
 			throw new ApplicationException(ioe.getMessage());
 		}		
 	}
 
-	public synchronized String closePosition(String positionId) throws OrderException, ApplicationException {
+	public synchronized String closePosition(String positionId) throws ApplicationException {
 		
 		try {
 			TradeService service = TradeService.CONNECTION.create(TradeService.class);		
 			Response<TradeResponse> httpResponse = service.sell(positionId).execute();			
 	
 			if (httpResponse.isSuccessful()) {
-				return httpResponse.body().getProfitAndLoss().getAmount();
+				String profitLoss = httpResponse.body().getProfitAndLoss().getAmount();
+				logger.info("---- Sold at profit/loss of " + profitLoss + " ----");
+				return profitLoss;
 			} else {				
-				ErrorResponse error = new Gson().fromJson(httpResponse.errorBody().string(), ErrorResponse.class);
-				throw new OrderException(error.getMessage(), error.getDeveloperMessage(), error.getErrorCode(), httpResponse.code());
+				throw new ApplicationException(httpResponse.errorBody().string());
 			}						
 		} catch (IOException ioe) {
 			throw new ApplicationException(ioe.getMessage());

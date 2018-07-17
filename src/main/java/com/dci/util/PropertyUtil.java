@@ -1,37 +1,29 @@
 package com.dci.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
-public enum PropertyUtil {
+public class PropertyUtil {
 	
-	INSTANCE;
+	static HashMap<String, String> propCache = new HashMap<String, String>();
 	
-	FileInputStream stream;
-	Properties props;
-	String propertyFile;
+	public void loadProperties(String filename) {
+		try {
+			Properties props = new Properties();		
+			InputStream stream = getClass().getClassLoader().getResourceAsStream(filename);
+			props.load(stream);
+			propCache.putAll(props.entrySet().stream()
+								.collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString())));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
 		
-	public String getValue(String key) {
-		if(props == null) {
-			try {
-				String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-				String configPath = rootPath + propertyFile;
-				stream = new FileInputStream(configPath);
-				props = new Properties();
-				props.load(stream);
-				
-			} catch(FileNotFoundException fnfe)	 {
-				fnfe.printStackTrace();
-			} catch(IOException ioe) {
-				ioe.printStackTrace();			}
-		}
-		 
-		return props.getProperty(key);
-	}
-	
-	public void setPropertyFile(String fileName) {
-		this.propertyFile = fileName;
-	}
+	public static String getValue(String key) {		
+		return propCache.get(key);
+	}	
 }

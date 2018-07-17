@@ -8,6 +8,9 @@ public class TradeResponse {
 	
 	@SerializedName("profitAndLoss")
 	private Price profitAndLoss;
+	
+	@SerializedName("price")
+	private Price price;
 
 	public String getPositionId() {
 		return positionId;
@@ -23,6 +26,14 @@ public class TradeResponse {
 
 	public void setProfitAndLoss(Price profitAndLoss) {
 		this.profitAndLoss = profitAndLoss;
+	}
+
+	public Price getPrice() {
+		return price;
+	}
+
+	public void setPrice(Price price) {
+		this.price = price;
 	}
 	
 	
