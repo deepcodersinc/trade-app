@@ -16,20 +16,19 @@ import retrofit2.Response;
 public class TradeOrderClient {
 	
 	private final Logger logger = LoggerFactory.getLogger(TradeOrderClient.class);
-	
-	public synchronized String openPosition(String productId, float price) throws BuyOrderException, ApplicationException {		
+		
+	public String openPosition(String productId, float price) throws BuyOrderException, ApplicationException {		
 	
 		TradeRequest request = new TradeRequest(productId, new Price("BUX", 2, Float.toString(price)), 2);
 		
 		try {
-			TradeService service = TradeService.CONNECTION.create(TradeService.class);
+			TradeOrderService service = TradeOrderService.CONNECTION.create(TradeOrderService.class);
 			Response<TradeResponse> httpResponse = service.buy(request).execute();
 			
 			if (httpResponse.isSuccessful()) {
 				logger.info("---- Bought " + productId + " at " + httpResponse.body().getPrice().getAmount() + " ----");
 				return httpResponse.body().getPositionId();
 			} else {
-				logger.error(httpResponse.errorBody().string());
 				throw new BuyOrderException(httpResponse.errorBody().string());
 			}		
 		} catch (IOException ioe) {
@@ -37,10 +36,10 @@ public class TradeOrderClient {
 		}		
 	}
 
-	public synchronized String closePosition(String positionId) throws ApplicationException {
+	public String closePosition(String positionId) throws ApplicationException {
 		
 		try {
-			TradeService service = TradeService.CONNECTION.create(TradeService.class);		
+			TradeOrderService service = TradeOrderService.CONNECTION.create(TradeOrderService.class);		
 			Response<TradeResponse> httpResponse = service.sell(positionId).execute();			
 	
 			if (httpResponse.isSuccessful()) {

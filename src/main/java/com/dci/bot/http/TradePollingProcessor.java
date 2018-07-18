@@ -22,7 +22,6 @@ public class TradePollingProcessor {
 
 	public TradePollingProcessor(Position position, ConcurrentLinkedQueue<String> messageQueue) {
 		this.position = position;
-		this.client = new TradeOrderClient();
 		this.messageQueue = messageQueue;
 		this.terminatePolling = false;
 	}
@@ -43,12 +42,13 @@ public class TradePollingProcessor {
 				checkIfTradable(position.getSellPriceLowerLimit(),
 						p -> (position.getOrderStatus().isBought() && p >= quote.getBody().getCurrentPrice()));
 				checkIfTradable(position.getBuyPrice(),
-						p -> (position.getOrderStatus().isOpen() && p >= quote.getBody().getCurrentPrice()));
+						p -> (position.getOrderStatus().isOpen() && p == quote.getBody().getCurrentPrice()));
 						
 			} catch (ApplicationException ae) {
 				logger.error(ae.getMessage());	
 			} catch (Exception e) {
 				logger.error(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -94,6 +94,14 @@ public class TradePollingProcessor {
 	
 	public Position getPosition() {
 		return this.position;
+	}
+	
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+	
+	public void setTradeOrderClient(TradeOrderClient client) {
+		this.client = client;
 	}
 	
 }

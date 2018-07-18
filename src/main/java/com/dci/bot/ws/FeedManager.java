@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dci.bot.http.TradeOrderClient;
 import com.dci.bot.http.TradePollingProcessor;
 import com.dci.bot.model.Position;
 import com.neovisionaries.ws.client.WebSocket;
@@ -14,16 +15,16 @@ public class FeedManager {
 
 	private final Logger logger = LoggerFactory.getLogger(FeedManager.class);
 	private WebSocket ws;
-	ConcurrentLinkedQueue<String> messageQueue;
 	
 	public FeedManager(WebSocket websocket) {
 		this.ws = websocket;
-		messageQueue = new ConcurrentLinkedQueue<String>();
 	}
-
-	public void subscribe(Position position) throws Exception {		
+	
+	private void init(Position position) {
+		ConcurrentLinkedQueue<String> messageQueue = new ConcurrentLinkedQueue<String>();;
 		TradePollingProcessor processor = new TradePollingProcessor(position, messageQueue);
-				
+		processor.setTradeOrderClient(new TradeOrderClient());
+		
 		new Thread(() -> {
 			while(!processor.isTerminatePolling()) {
 				processor.processQuote();
@@ -39,7 +40,10 @@ public class FeedManager {
 				logger.debug(message);
 			}			
 		});
+	}
 
+	public void subscribe(Position position) throws Exception {		
+		init(position);
 		ws.sendText(position.getSubscriptionMessage());
 	}
 

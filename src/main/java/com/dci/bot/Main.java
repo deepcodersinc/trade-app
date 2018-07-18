@@ -1,8 +1,6 @@
 package com.dci.bot;
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
@@ -19,7 +17,6 @@ public class Main {
 		new PropertyUtil().loadProperties("environment-prod.properties");
 
 		scanner = new Scanner(System.in);
-		List<Position> positions = new ArrayList<Position>();
 		Position position;
 
 		try {
@@ -35,19 +32,18 @@ public class Main {
 			System.out.print("Enter sell price upper limit: ");
 			position.setSellPriceUpperLimit(scanner.nextFloat());
 			validateInput("sell upper limit must be greater than buy price", position.getSellPriceUpperLimit(),
-					p -> p <= buyPrice);
+					p -> p < buyPrice);
 
 			System.out.print("Enter sell price lower limit: ");
 			position.setSellPriceLowerLimit(scanner.nextFloat());
 			validateInput("sell lower limit must be less than buy price", position.getSellPriceLowerLimit(),
-					p -> p >= buyPrice);
+					p -> p > buyPrice);
 
-			positions.add(position);			
-
+			
 			FeedManager fm = new FeedManager(new WSConnector().getConnection());
 			fm.subscribe(position);
 			
-			//fm.subscribe(new Position("sb26513", 150, 160, 130));
+			//fm.subscribe(new Position("sb28248", 50, 100, 10));
 
 		} catch (InputMismatchException ime) {
 			System.out.println("Error on input");

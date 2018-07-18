@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.dci.bot.model.Position;
-import com.dci.util.PropertyUtil;
 import com.neovisionaries.ws.client.WebSocket;
 
 public class FeedManagerTest {
@@ -24,7 +23,6 @@ public class FeedManagerTest {
 	
 	@Before 
 	public void setup() {
-		new PropertyUtil().loadProperties("environment-test.properties");
 		MockitoAnnotations.initMocks(this);
 	}
 	
