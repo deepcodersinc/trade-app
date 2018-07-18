@@ -43,7 +43,6 @@ public class FeedManager {
 			@Override
 			public void onTextMessage(WebSocket websocket, String message) {
 				messageQueue.add(message);
-				logger.debug(message);
 			}			
 		});
 	}
