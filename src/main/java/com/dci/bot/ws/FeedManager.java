@@ -20,6 +20,12 @@ public class FeedManager {
 		this.ws = websocket;
 	}
 	
+	/**
+	 * Creates a new messageQueue and a new listner to populate the queue.
+	 * Then spawns a new thread setting the Position for TradePollingProcessor that will pull the messages for processing.
+	 * 
+	 * @param position
+	 */
 	private void init(Position position) {
 		ConcurrentLinkedQueue<String> messageQueue = new ConcurrentLinkedQueue<String>();;
 		TradePollingProcessor processor = new TradePollingProcessor(position, messageQueue);

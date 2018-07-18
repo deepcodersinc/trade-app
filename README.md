@@ -27,6 +27,8 @@ Note that the rule is `upperLimitSellPrice > buyPrice > lowerLimitSellPrice`
 
 ## Design
 
+At start a new `FeedManager` is created by obtaining a new `WSConnection`. Once a new subscription is made for a `Position`, the `FeedManager` attaches the position to a `TradePollingProcessor` along with a new messageQueue. The `TradePollingProcessor` is spawned in a new thread. The WebSocket listener populates the queue with new messages and the `TradePollingProcessor` polls the queue for processing the messages. 
+
 ![Alt text](screenshots/uml.png)
 
 ## Technology choices

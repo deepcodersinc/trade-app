@@ -54,12 +54,12 @@ public class TradePollingProcessorTest {
 	}
 
 	@Test
-	public void successfulBuyAtLessQuotePriceTest() {
+	public void unsuccessfulBuyAtLessQuotePriceTest() {
 		createInput(8, 10, 12, 8);
 
 		assertTrue(processor.getPosition().getOrderStatus().isOpen());
 		processor.processQuote();
-		assertTrue(processor.getPosition().getOrderStatus().isBought());
+		assertFalse(processor.getPosition().getOrderStatus().isBought());
 	}
 
 	@Test

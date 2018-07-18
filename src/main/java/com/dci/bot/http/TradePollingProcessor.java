@@ -15,6 +15,8 @@ import com.google.gson.GsonBuilder;
 public class TradePollingProcessor {
 
 	private final Logger logger = LoggerFactory.getLogger(TradePollingProcessor.class);
+	final static String TRADING_QUOTE = "trading.quote";
+	
 	TradeOrderClient client;
 	Position position;
 	ConcurrentLinkedQueue<String> messageQueue;
@@ -26,6 +28,9 @@ public class TradePollingProcessor {
 		this.terminatePolling = false;
 	}
 
+	/**
+	 * Poll the queue and get out the last message for processing
+	 */
 	public void processQuote() {
 
 		while (!messageQueue.isEmpty()) {
@@ -33,7 +38,7 @@ public class TradePollingProcessor {
 				String message = messageQueue.poll();
 				Quote quote = new GsonBuilder().create().fromJson(message, Quote.class);
 
-				if (!"trading.quote".equals(quote.getT())) {
+				if (!TRADING_QUOTE.equals(quote.getT())) {
 					continue;
 				}
 				
@@ -59,6 +64,11 @@ public class TradePollingProcessor {
 		}
 	}
 	
+	/**
+	 * Executes a trade depending on the status of the Position
+	 * 
+	 * @throws ApplicationException
+	 */
 	private synchronized void executeTrade() throws ApplicationException {
 		switch (position.getOrderStatus()) {
 
