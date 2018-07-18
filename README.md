@@ -24,6 +24,7 @@ Note that the rule is `upperLimitSellPrice > buyPrice > lowerLimitSellPrice`
 
 ![Alt text](screenshots/project-structure.png)
 
+
 ## Design
 
 ![Alt text](screenshots/uml.png)
@@ -42,9 +43,3 @@ Note that the rule is `upperLimitSellPrice > buyPrice > lowerLimitSellPrice`
 
 * Increase Unit test coverage
 * Better exception handling
-
-
-## Open Issues
-
-* When buy price and sell price are both less than the current price, the bot will buy and sell with no profit and loss.
-* If sell is not possible for any reason, the bot keeps the position open and repetitively tries to sell even if the same error occurs.
